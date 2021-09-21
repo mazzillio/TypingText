@@ -26,6 +26,7 @@ const Word=(props)=>{
 const App=()=>{
     const [typedKeys,setTypedKeys]=useState([])
     const [validKeys,setValidKeys]=useState([])
+    const [competedWords,setCompletedWors]=useState([])
     const [word,setWord]=useState('')
     const handleKeyDown=(e)=>{
         e.preventDefault();
@@ -44,6 +45,20 @@ const App=()=>{
     useEffect(()=>{
         setWord(getPalavra())
     },[])
+    useEffect(()=>{
+        const palavra=validKeys.join('').toLowerCase()
+        if(word && palavra === word)
+        {
+            let novaPalavra=null;
+            do{
+                novaPalavra=getPalavra()
+            }while(competedWords.includes(novaPalavra))
+
+            setWord(novaPalavra)
+            setValidKeys([])
+            setCompletedWors((prev)=>[...prev,word])
+        }
+    },[word,validKeys,competedWords])
     return (
     
     <div className="container" tabIndex ="0" onKeyDown={handleKeyDown}>
@@ -53,9 +68,11 @@ const App=()=>{
        <div className="typed-keys">{typedKeys?typedKeys.join(' '):null}</div> 
        <div className="completed-words-keys">
            <ol>
-               <li>cidade</li>
-               <li>carro</li>
-               <li>professor</li>
+               {
+                   competedWords.map((word)=>{
+                       return(<li key={word}>{word}</li>)
+                   })
+               }
                
            </ol>
        </div>
